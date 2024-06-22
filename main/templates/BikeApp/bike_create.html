@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Bicicleta</title>
+</head>
+<body>
+    <h1>Crear Bicicleta</h1>
+    <form id="bike-form" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+</body>
+</html>
+

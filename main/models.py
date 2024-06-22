@@ -22,3 +22,13 @@ class Bike(models.Model):
             super().save(*args, **kwargs)  # Guarda nuevamente para asociar el QRCode a la instancia
         else:
             super().save(*args, **kwargs)
+            
+#Para establecer las estaciones
+class Station(models.Model):
+    name = models.CharField(max_length=100)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return self.name
+

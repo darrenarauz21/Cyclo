@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Estaciones</title>
+</head>
+<body>
+    <h1>Lista de Estaciones</h1>
+    <a href="{% url 'station_create' %}">Crear Nueva Estación</a>
+    <ul>
+        {% for station in stations %}
+            <li>
+                <a href="{% url 'station_detail' station.pk %}">{{ station.name }}</a>
+                (<a href="{% url 'station_update' station.pk %}">Editar</a>,
+                <a href="{% url 'station_delete' station.pk %}">Eliminar</a>)
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
