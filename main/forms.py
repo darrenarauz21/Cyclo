@@ -9,6 +9,6 @@ class BikeForm(forms.ModelForm):
 class StationForm(forms.ModelForm):
     class Meta:
         model = Station
-        fields = ['name', 'latitude', 'longitude']
+        fields = ['name', 'state', 'latitude', 'longitude']
      
       

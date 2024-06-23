@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% block content %}
 <!DOCTYPE html>
@@ -6,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Bicicletas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         /* Estilos para el popup */
         .modal {
@@ -43,43 +44,57 @@
     </style>
 </head>
 <body>
-    <h1>Lista de Bicicletas</h1>
-    <button id="openModal">Crear Bicicleta</button>
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body">
-                <!-- El formulario se cargará aquí -->
+    <div class="container">
+        <h1>Lista de Bicicletas</h1>
+        <button id="openModal" class="btn btn-primary">Crear Bicicleta</button>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-body">
+                    <!-- El formulario se cargará aquí -->
+                </div>
             </div>
         </div>
-    </div>
 
-    <ul>
-        {% for bike in bikes %}
-            <li>
-                Bicicleta ID: {{ bike.id }}
-                <br>
-                <img src="{{ bike.qr_code.url }}" alt="QR Code">
-                <br>
-                <button class="edit-bike" data-url="{% url 'bike_update' bike.pk %}">Editar</button>
-                <button class="delete-bike" data-url="{% url 'bike_delete' bike.pk %}">Eliminar</button>
+        <ul class="list-group mt-3">
+            {% for bike in bikes %}
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <p>Bicicleta ID: {{ bike.id }}</p>
+                        <p>Estado: {{bike.state}}</p>
+                        <div id="qrcode-{{ bike.id }}"></div>
+                    </div>
+                    <div class="col text-right">
+                        <button class="btn btn-success edit-bike" data-url="{% url 'bike_update' pk=bike.pk %}">Editar</button>
+                        <button class="btn btn-danger delete-bike ml-2" data-url="{% url 'bike_delete' pk=bike.pk %}">Eliminar</button>
+                    </div>
+                </div>
             </li>
-        {% endfor %}
-    </ul>
+            <script>
+                new QRCode(document.getElementById("qrcode-{{ bike.id }}"), {
+                    text: "{{ bike.id }}",
+                    width: 128,
+                    height: 128
+                });
+            </script>
+            {% endfor %}
+        </ul>
+    </div>
 
     <script>
         // Script para abrir y cerrar el popup
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("openModal");
         var span = document.getElementsByClassName("close")[0];
-
+    
         btn.onclick = function() {
             fetch('{% url "bike_create" %}')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById("modal-body").innerHTML = html;
                     modal.style.display = "block";
-
+    
                     document.getElementById("bike-form").onsubmit = function(e) {
                         e.preventDefault();
                         var formData = new FormData(this);
@@ -101,27 +116,26 @@
                     }
                 });
         }
-
+    
         span.onclick = function() {
             modal.style.display = "none";
         }
-
+    
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
-
+    
         document.querySelectorAll('.edit-bike').forEach(button => {
             button.onclick = function() {
                 var url = this.getAttribute('data-url');
                 fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById("modal-body").innerHTML = html;
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("modal-body").innerHTML = data.html_form;
                         modal.style.display = "block";
-
-                        document.getElementById("bike-form").onsubmit = function(e) {
+                        document.querySelector('.js-bike-form').onsubmit = function(e) {
                             e.preventDefault();
                             var formData = new FormData(this);
                             fetch(url, {
@@ -175,7 +189,10 @@
                     });
             }
         });
+
     </script>
-
-
+    
+</body>
+</html>
 {% endblock %}
+                               

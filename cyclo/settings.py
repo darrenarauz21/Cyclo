@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'django.contrib.humanize',
-    'apps.qr_generator',
 ]
 
 MIDDLEWARE = [
